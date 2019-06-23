@@ -280,11 +280,17 @@ enum class Mousecode {
 };
 
 
+enum struct EngineEventCode {
+    none = 0,
+};
+
+
 struct Event {
     SDL_Event sdl_event;
+    EngineEventCode engine_code;
 
     Event();
-    Event(SDL_Event sdl_event);
+    Event(SDL_Event sdl_event, EngineEventCode engine_code = EngineEventCode::none);
 
     bool is_quit() const;
     bool is_keyboard_event() const;
@@ -299,8 +305,12 @@ struct Event {
 
 struct InputManager {
     std::vector<Event> events_queue;
+    uint32_t engine_event_type;
+
+    InputManager();
 
     void push_event(SDL_Event sdl_event);
+    void generate_engine_event(const EngineEventCode engine_code);
     void clear_events();
 
     bool is_pressed(Keycode kc) const;

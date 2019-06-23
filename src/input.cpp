@@ -1,13 +1,18 @@
 #include <SDL.h>
 
+#include "kaacore/log.h"
+
 #include "kaacore/input.h"
 
 
 namespace kaacore {
 
-Event::Event() : sdl_event() {}
+Event::Event() : sdl_event()
+{}
 
-Event::Event(SDL_Event sdl_event) : sdl_event(sdl_event) {}
+Event::Event(SDL_Event sdl_event, EngineEventCode engine_code)
+    : sdl_event(sdl_event), engine_code(engine_code)
+{}
 
 bool Event::is_quit() const
 {
@@ -55,10 +60,30 @@ glm::dvec2 Event::get_mouse_position() const
     return glm::dvec2(this->sdl_event.button.x, this->sdl_event.button.y);
 }
 
+InputManager::InputManager()
+{
+    this->engine_event_type = SDL_RegisterEvents(1);
+}
 
 void InputManager::push_event(SDL_Event sdl_event)
 {
-    this->events_queue.emplace_back(sdl_event);
+    if (sdl_event.type == this->engine_event_type) {
+        this->events_queue.emplace_back(sdl_event,
+                                        EngineEventCode(sdl_event.user.code));
+    } else {
+        this->events_queue.emplace_back(sdl_event);
+    }
+}
+
+void InputManager::generate_engine_event(const EngineEventCode engine_code)
+{
+    SDL_Event sdl_event;
+    SDL_memset(&sdl_event, 0, sizeof(sdl_event));
+    sdl_event.type = this->engine_event_type;
+    sdl_event.user.code = int32_t(engine_code);
+    if(!SDL_PushEvent(&sdl_event)) {
+        log<LogLevel::error>("Failed to queue event: %s", SDL_GetError());
+    }
 }
 
 void InputManager::clear_events()
