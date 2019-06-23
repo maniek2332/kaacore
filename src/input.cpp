@@ -1,6 +1,8 @@
 #include <SDL.h>
 
+#include "kaacore/engine.h"
 #include "kaacore/input.h"
+#include "kaacore/log.h"
 
 
 namespace kaacore {
@@ -52,7 +54,15 @@ bool Event::is_releasing(Mousecode mc) const
 
 glm::dvec2 Event::get_mouse_position() const
 {
-    return glm::dvec2(this->sdl_event.button.x, this->sdl_event.button.y);
+    // return glm::dvec2(this->sdl_event.button.x, this->sdl_event.button.y);
+
+    glm::ivec2 window_size = get_engine()->window->size();
+
+    log("SDL pos: %d %d", this->sdl_event.button.x, this->sdl_event.button.y);
+    log("Window size: %d %d", window_size.x, window_size.y);
+
+    return glm::dvec2(this->sdl_event.button.x - window_size.x / 2,
+                      this->sdl_event.button.y - window_size.y / 2);
 }
 
 
@@ -94,7 +104,15 @@ glm::dvec2 InputManager::get_mouse_position() const
 {
     int pos_x, pos_y;
     SDL_GetMouseState(&pos_x, &pos_y);
-    return glm::dvec2(pos_x, pos_y);
+
+    glm::ivec2 window_size = get_engine()->window->size();
+
+    log("SDL pos: %d %d", pos_x, pos_y);
+    log("Window size: %d %d", window_size.x, window_size.y);
+
+    return {0, 0};
+    // return glm::dvec2(window_size.x / 2 - pos_x, window_size.y / 2 - pos_y);
+    // return glm::dvec2(pos_x - window_size.x / 2, pos_y - window_size.y / 2);
 }
 
 } // namespace kaacore

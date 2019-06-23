@@ -80,9 +80,7 @@ struct PolygonTesterDemoScene : Scene {
                 auto pos = event.get_mouse_position();
                 log("Adding point: (%f, %f)", pos.x, pos.y);
                 auto window_size = this->engine->window->size();
-                this->add_point(
-                    pos - glm::dvec2(window_size.x / 2, window_size.y / 2)
-                );
+                this->add_point(pos);
             } else if (event.is_pressing(Keycode::f)) {
                 log("Finalizing polygon");
                 this->finalize_polygon();
