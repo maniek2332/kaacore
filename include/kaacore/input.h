@@ -282,6 +282,7 @@ enum class Mousecode {
 
 enum struct EngineEventCode {
     none = 0,
+    music_finished,
 };
 
 
@@ -300,6 +301,7 @@ struct Event {
     bool is_releasing(Keycode kc) const;
     bool is_releasing(Mousecode kc) const;
     glm::dvec2 get_mouse_position() const;
+    bool is_music_finished() const;
 };
 
 
@@ -310,7 +312,7 @@ struct InputManager {
     InputManager();
 
     void push_event(SDL_Event sdl_event);
-    void generate_engine_event(const EngineEventCode engine_code);
+    void emit_engine_event(const EngineEventCode engine_code);
     void clear_events();
 
     bool is_pressed(Keycode kc) const;

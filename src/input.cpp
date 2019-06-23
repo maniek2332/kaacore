@@ -60,6 +60,11 @@ glm::dvec2 Event::get_mouse_position() const
     return glm::dvec2(this->sdl_event.button.x, this->sdl_event.button.y);
 }
 
+bool Event::is_music_finished() const
+{
+    return this->engine_code == EngineEventCode::music_finished;
+}
+
 InputManager::InputManager()
 {
     this->engine_event_type = SDL_RegisterEvents(1);
@@ -75,7 +80,7 @@ void InputManager::push_event(SDL_Event sdl_event)
     }
 }
 
-void InputManager::generate_engine_event(const EngineEventCode engine_code)
+void InputManager::emit_engine_event(const EngineEventCode engine_code)
 {
     SDL_Event sdl_event;
     SDL_memset(&sdl_event, 0, sizeof(sdl_event));

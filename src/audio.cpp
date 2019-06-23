@@ -3,6 +3,7 @@
 #include "SDL_mixer.h"
 
 #include "kaacore/engine.h"
+#include "kaacore/input.h"
 #include "kaacore/exceptions.h"
 #include "kaacore/log.h"
 
@@ -105,16 +106,25 @@ void Music::play()
 }
 
 
+void _music_finished_hook()
+{
+    KAACORE_ASSERT(get_engine()->input_manager);
+    get_engine()->input_manager->emit_engine_event(EngineEventCode::music_finished);
+}
+
+
 AudioManager::AudioManager()
     : master_sound_volume(1.), master_music_volume(1.)
 {
     SDL_InitSubSystem(SDL_INIT_AUDIO);
     Mix_Init(0); // no libraries, just WAV support
     Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048);
+    Mix_HookMusicFinished(&_music_finished_hook);
 }
 
 AudioManager::~AudioManager()
 {
+    Mix_HookMusicFinished(NULL);
     Mix_CloseAudio();
     Mix_Quit();
 }
