@@ -11,6 +11,7 @@
 #include "kaacore/physics.h"
 #include "kaacore/fonts.h"
 #include "kaacore/sprites.h"
+#include "kaacore/transitions.h"
 
 
 namespace kaacore {
@@ -60,6 +61,7 @@ class Node {
     glm::dvec4 _color = {1., 1., 1., 1.};
     bool _visible = true;
     Alignment _origin_alignment = Alignment::none;
+    NodeTransitionRunner _transition;
 
     Scene* _scene = nullptr;
     Node* _parent = nullptr;
@@ -119,6 +121,8 @@ class Node {
 
     Scene* scene() const;
     Node* parent() const;
+
+    void set_transition(const NodeTransitionHandle& transition);
 
     void setup_wrapper(std::unique_ptr<ForeignNodeWrapper>&& wrapper);
     ForeignNodeWrapper* wrapper_ptr() const;
