@@ -119,10 +119,11 @@ class Node {
     Alignment origin_alignment();
     void origin_alignment(const Alignment& alignment);
 
+    NodeTransitionHandle transition();
+    void transition(const NodeTransitionHandle& transition);
+
     Scene* scene() const;
     Node* parent() const;
-
-    void set_transition(const NodeTransitionHandle& transition);
 
     void setup_wrapper(std::unique_ptr<ForeignNodeWrapper>&& wrapper);
     ForeignNodeWrapper* wrapper_ptr() const;
