@@ -51,6 +51,8 @@ struct FontData {
         const Resource<Image> baked_texture, const BakedFontData baked_font);
 
     static Resource<FontData> load(const std::string& font_filepath);
+    static Resource<FontData> load_from_memory(
+        const uint8_t* font_file_content, const size_t size);
 
     Shape generate_text_shape(
         const std::string& text, double size, double indent, double max_width);

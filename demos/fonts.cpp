@@ -50,7 +50,7 @@ struct DemoFontsScene : Scene {
 
         this->node_text = new Node(NodeType::text);
         this->node_text->position({200., 0.});
-        this->node_text->text.font(font);
+        // this->node_text->text.font(font);
         this->node_text->text.content(txt_lorem_ipsum);
         this->node_text->text.font_size(24.);
         this->node_text->text.line_width(270.);

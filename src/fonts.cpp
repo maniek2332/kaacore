@@ -4,6 +4,7 @@
 #include "stb_rect_pack.h"
 #include "stb_truetype.h"
 
+#include "kaacore/embedded_data.h"
 #include "kaacore/exceptions.h"
 #include "kaacore/fonts.h"
 #include "kaacore/images.h"
@@ -15,7 +16,7 @@
 namespace kaacore {
 
 std::pair<bimg::ImageContainer*, BakedFontData>
-bake_font_texture(const RawFile& font_file)
+bake_font_texture(const uint8_t* font_file_content, const size_t size)
 {
     std::vector<uint8_t> pixels_single;
     pixels_single.resize(font_baker_texture_size * font_baker_texture_size);
@@ -27,7 +28,7 @@ bake_font_texture(const RawFile& font_file)
         &pack_ctx, pixels_single.data(), font_baker_texture_size,
         font_baker_texture_size, 0, 1, nullptr);
     stbtt_PackFontRange(
-        &pack_ctx, font_file.content.data(), 0, font_baker_pixel_height,
+        &pack_ctx, font_file_content, 0, font_baker_pixel_height,
         font_baker_first_glyph, font_baker_glyphs_count,
         baked_font_data.data());
     stbtt_PackEnd(&pack_ctx);
@@ -50,6 +51,13 @@ bake_font_texture(const RawFile& font_file)
         font_baker_texture_size, pixels_rgba);
 
     return std::make_pair(baked_font_image, baked_font_data);
+}
+
+std::pair<bimg::ImageContainer*, BakedFontData>
+bake_font_texture(const RawFile& font_file)
+{
+    return bake_font_texture(
+        font_file.content.data(), font_file.content.size());
 }
 
 FontRenderGlyph::FontRenderGlyph(
@@ -184,6 +192,17 @@ FontData::load(const std::string& font_filepath)
         Image::load(texture, baked_font_image), baked_font_data);
 }
 
+Resource<FontData>
+FontData::load_from_memory(const uint8_t* font_file_content, const size_t size)
+{
+    auto [baked_font_image, baked_font_data] =
+        bake_font_texture(font_file_content, size);
+    bgfx::TextureHandle texture = make_texture(baked_font_image);
+
+    return std::make_shared<FontData>(
+        Image::load(texture, baked_font_image), baked_font_data);
+}
+
 std::vector<FontRenderGlyph>
 FontData::generate_render_glyphs(
     const std::string& text, const double pixel_height)
@@ -236,7 +255,13 @@ container_node(const TextNode* text)
 TextNode::TextNode()
     : _content("TXT"), _font_size(28.), _line_width(INFINITY),
       _interline_spacing(1.), _first_line_indent(0.)
-{}
+{
+    static auto file_pair =
+        get_embedded_file_content("embedded_resources/font_munro/munro.ttf");
+    static Resource<FontData> default_font =
+        FontData::load_from_memory(file_pair.first, file_pair.second);
+    this->font(default_font);
+}
 
 TextNode::~TextNode() {}
 

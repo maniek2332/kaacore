@@ -86,6 +86,7 @@ set(SRC_CXX_FILES
     timers.cpp
     transitions.cpp
     node_transitions.cpp
+    embedded_data.cpp
 )
 
 set(SRC_H_FILES
