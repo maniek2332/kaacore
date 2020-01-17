@@ -43,19 +43,55 @@ set_target_properties(
     PROPERTIES POSITION_INDEPENDENT_CODE ON
 )
 
+shaderc(
+    FILE shaders/default.vs
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/shaders/binary/default_glsl_vertex_shader.bin
+    VERTEX
+    LINUX PROFILE 120
+    INCLUDES third_party/bgfx/bgfx/src/
+)
+
+shaderc(
+    FILE shaders/default.fs
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/shaders/binary/default_glsl_fragment_shader.bin
+    FRAGMENT
+    LINUX PROFILE 120
+    INCLUDES third_party/bgfx/bgfx/src/
+)
+
+# add_custom_command(
+#     COMMAND "$<TARGET_FILE:shaderc>"
+#     ARGS
+#     -i third_party/bgfx/bgfx/src --type fragment --platform linux -p 120
+#     -f shaders/default.fs -o new__default_glsl_fragment_shader.bin
+#     OUTPUT new__default_glsl_fragment_shader.bin
+#     MAIN_DEPENDENCY shaders/default.f
+#     DEPENDS bgfx shaderc
+#     COMMENT "Compiling fragment shader"
+# )
+
 add_subdirectory(src)
 
 cmrc_add_resource_library(
     kaacore_embedded_assets
 
-    shaders/binary/default_glsl_fragment_shader.bin
-    shaders/binary/default_glsl_vertex_shader.bin
-    shaders/binary/default_hlsl_d3d9_fragment_shader.bin
-    shaders/binary/default_hlsl_d3d9_vertex_shader.bin
-    shaders/binary/default_hlsl_d3d11_fragment_shader.bin
-    shaders/binary/default_hlsl_d3d11_vertex_shader.bin
+    # new__default_glsl_fragment_shader.bin
+    #
+    # shaders/binary/default_glsl_fragment_shader.bin
+    # shaders/binary/default_glsl_vertex_shader.bin
+    # shaders/binary/default_hlsl_d3d9_fragment_shader.bin
+    # shaders/binary/default_hlsl_d3d9_vertex_shader.bin
+    # shaders/binary/default_hlsl_d3d11_fragment_shader.bin
+    # shaders/binary/default_hlsl_d3d11_vertex_shader.bin
 
     embedded_resources/font_munro/munro.ttf
+)
+
+cmrc_add_resources(
+    kaacore_embedded_assets
+    WHENCE ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/shaders/binary/default_glsl_vertex_shader.bin
+    ${CMAKE_CURRENT_BINARY_DIR}/shaders/binary/default_glsl_fragment_shader.bin
 )
 
 target_link_libraries(kaacore PUBLIC kaacore_embedded_assets)
