@@ -13,3 +13,6 @@
 [submodule "third_party/glm"]
 	path = third_party/glm
 	url = https://github.com/g-truc/glm
+[submodule "third_party/polymorphic_value"]
+	path = third_party/polymorphic_value
+	url = https://github.com/jbcoe/polymorphic_value

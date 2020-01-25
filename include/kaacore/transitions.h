@@ -5,14 +5,19 @@
 #include <memory>
 #include <vector>
 
+#include <polymorphic_value.h>
+
 #include <glm/glm.hpp>
+
+using jbcoe::polymorphic_value;
 
 namespace kaacore {
 
 struct Node;
 
 class NodeTransitionBase;
-typedef std::shared_ptr<const NodeTransitionBase> NodeTransitionHandle;
+typedef polymorphic_value<const NodeTransitionBase> NodeTransitionHandle;
+// typedef polymorphic_value<const NodeTransitionBase> NodeTransitionHandle;
 
 struct TransitionStateBase {};
 
@@ -141,7 +146,7 @@ template<class T, class... Args>
 NodeTransitionHandle
 make_node_transition(Args&&... args)
 {
-    return std::make_shared<T>(std::forward<Args>(args)...);
+    return NodeTransitionHandle{new T(std::forward<Args>(args)...)};
 };
 
 template<class... Args>
@@ -149,8 +154,8 @@ NodeTransitionHandle
 make_node_transitions_sequence(
     const std::vector<NodeTransitionHandle>& transitions, Args&&... args)
 {
-    return std::make_shared<NodeTransitionsSequence>(
-        transitions, std::forward<Args>(args)...);
+    return NodeTransitionHandle{new NodeTransitionsSequence(
+        transitions, std::forward<Args>(args)...)};
 }
 
 template<class... Args>
@@ -158,8 +163,8 @@ NodeTransitionHandle
 make_node_transitions_parallel(
     const std::vector<NodeTransitionHandle>& transitions, Args&&... args)
 {
-    return std::make_shared<NodeTransitionsParallel>(
-        transitions, std::forward<Args>(args)...);
+    return NodeTransitionHandle{new NodeTransitionsParallel(
+        transitions, std::forward<Args>(args)...)};
 }
 
 } // namespace kaacore

@@ -54,7 +54,7 @@ struct TransitionsDemoScene : Scene {
             },
             TransitionWarping(0, true));
 
-        for (int i = 0; i < 625; i++) {
+        for (int i = 0; i < 4225; i++) {
             Node* node = new Node();
 
             node->shape(Shape::Circle(2.5));

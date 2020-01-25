@@ -35,6 +35,8 @@ add_subdirectory(third_party/glm)
 
 add_subdirectory(third_party/stb)
 
+add_subdirectory(third_party/polymorphic_value)
+
 set_target_properties(
     bgfx bimg bx chipmunk_static
     PROPERTIES POSITION_INDEPENDENT_CODE ON
