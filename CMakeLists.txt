@@ -11,29 +11,29 @@ set(BUILD_SHARED_LIBS OFF)
 # force dynamic SDL build
 set(SDL_SHARED_ENABLED_BY_DEFAULT ON)
 
-add_subdirectory(third_party/bgfx)
+add_subdirectory(third_party/bgfx EXCLUDE_FROM_ALL)
 target_compile_options(bgfx PUBLIC -DBGFX_CONFIG_MULTITHREADED=0)
 if (TARGET astc-codec)
     set_target_properties(astc-codec PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 set(SDL_STATIC OFF CACHE BOOL "")
-add_subdirectory(third_party/sdl2)
+add_subdirectory(third_party/sdl2 EXCLUDE_FROM_ALL)
 target_compile_options(SDL2 PUBLIC -DSDL_DISABLE_ANALYZE_MACROS)
 
 set(SDL_MIXER_SHARED OFF CACHE BOOL "")
-add_subdirectory(third_party/sdl_mixer)
+add_subdirectory(third_party/sdl_mixer EXCLUDE_FROM_ALL)
 
 set(BUILD_SHARED OFF CACHE BOOL "")
 set(BUILD_DEMOS OFF CACHE BOOL "")
-add_subdirectory(third_party/chipmunk2d)
+add_subdirectory(third_party/chipmunk2d EXCLUDE_FROM_ALL)
 unset(BUILD_SHARED)
 unset(BUILD_DEMOS)
 
 set(GLM_TEST_ENABLE OFF CACHE BOOL "")
-add_subdirectory(third_party/glm)
+add_subdirectory(third_party/glm EXCLUDE_FROM_ALL)
 
-add_subdirectory(third_party/stb)
+add_subdirectory(third_party/stb EXCLUDE_FROM_ALL)
 
 set_target_properties(
     bgfx bimg bx chipmunk_static

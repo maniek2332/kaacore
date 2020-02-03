@@ -1,0 +1,12 @@
+name: 'Test build'
+
+jobs:
+- job: build_macos
+  displayName: "Build macOS wheel"
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - bash: git submodule update --init --recursive
+  - bash: |
+      cmake -B./cmake_build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      cmake --build ./cmake_build --target all -j 9
