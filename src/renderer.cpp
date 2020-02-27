@@ -61,8 +61,7 @@ load_default_image()
     static const std::vector<uint8_t> image_content{0xFF, 0xFF, 0xFF, 0xFF};
     auto image_container =
         load_raw_image(bimg::TextureFormat::Enum::RGBA8, 1, 1, image_content);
-    auto texture_handle = make_texture(image_container);
-    auto image = std::make_unique<Image>(texture_handle, image_container);
+    auto image = std::unique_ptr<Image>(new Image(image_container));
     bgfx::setName(image->texture_handle, "DEFAULT TEXTURE");
     return image;
 }

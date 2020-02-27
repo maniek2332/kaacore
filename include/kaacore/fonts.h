@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -13,6 +14,11 @@
 #include "kaacore/shapes.h"
 
 namespace kaacore {
+
+void
+initialize_font_resources();
+void
+uninitialize_font_resources();
 
 typedef std::vector<stbtt_packedchar> BakedFontData;
 
@@ -43,31 +49,47 @@ struct FontRenderGlyph {
     static Shape make_shape(const std::vector<FontRenderGlyph>& render_glyphs);
 };
 
-struct FontData {
-    Resource<Image> baked_texture;
+class FontData : public Resource {
+  public:
+    const std::string path;
     BakedFontData baked_font;
+    ResourceReference<Image> baked_texture;
 
     FontData(
-        const Resource<Image> baked_texture, const BakedFontData baked_font);
+        const ResourceReference<Image> baked_texture, const BakedFontData baked_font);
 
-    static Resource<FontData> load(const std::string& font_filepath);
-    static Resource<FontData> load_from_memory(
-        const uint8_t* font_file_content, const size_t size);
-
+    ~FontData();
+    static ResourceReference<FontData> load(const std::string& path);
     Shape generate_text_shape(
         const std::string& text, double size, double indent, double max_width);
-
     std::vector<FontRenderGlyph> generate_render_glyphs(
         const std::string& text, const double scale_factor);
+
+  private:
+    FontData(const std::string& path);
+    virtual void _initialize() override;
+    virtual void _uninitialize() override;
+
+    friend class ResourcesRegistry<std::string, FontData>;
 };
 
-struct Font {
-    Resource<FontData> _font_data;
+class TextNode;
 
+class Font {
+  public:
     Font();
-    Font(const Resource<FontData>& font_data);
-
     static Font load(const std::string& font_filepath);
+
+  private:
+    ResourceReference<FontData> _font_data;
+
+    Font(const ResourceReference<FontData>& font_data);
+
+    friend class TextNode;
+};
+
+class FontManager {
+    FontData default_font_data;
 };
 
 class TextNode {

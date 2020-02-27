@@ -1,10 +1,11 @@
-#include <cstring>
 #include <memory>
+#include <cstring>
 #include <vector>
 
 #include "stb_rect_pack.h"
 #include "stb_truetype.h"
 
+#include "kaacore/engine.h"
 #include "kaacore/embedded_data.h"
 #include "kaacore/exceptions.h"
 #include "kaacore/fonts.h"
@@ -16,10 +17,24 @@
 
 namespace kaacore {
 
+ResourcesRegistry<std::string, FontData> _fonts_registry;
+
+void
+initialize_font_resources()
+{
+    _fonts_registry.initialze();
+}
+
+void
+uninitialize_font_resources()
+{
+    _fonts_registry.uninitialze();
+}
+
 std::pair<bimg::ImageContainer*, BakedFontData>
 bake_font_texture(const uint8_t* font_file_content, const size_t size)
 {
-    if (memcmp(
+    if (std::memcmp(
             font_file_content, "\x00\x01\x00\x00\x00", size >= 5 ? 5 : size) !=
         0) {
         throw kaacore::exception(
@@ -181,33 +196,36 @@ FontRenderGlyph::make_shape(const std::vector<FontRenderGlyph>& render_glyphs)
 }
 
 FontData::FontData(
-    const Resource<Image> baked_texture, const BakedFontData baked_font)
+    const ResourceReference<Image> baked_texture, const BakedFontData baked_font)
     : baked_texture(baked_texture), baked_font(baked_font)
 {}
 
-Resource<FontData>
-FontData::load(const std::string& font_filepath)
+FontData::FontData(const std::string& path) : path(path)
 {
-    RawFile file(font_filepath);
-    bimg::ImageContainer* baked_font_image;
-    BakedFontData baked_font_data;
-
-    std::tie(baked_font_image, baked_font_data) = bake_font_texture(file);
-    bgfx::TextureHandle texture = make_texture(baked_font_image);
-
-    return std::make_shared<FontData>(
-        Image::load(texture, baked_font_image), baked_font_data);
+    if (is_engine_initialized()) {
+        this->_initialize();
+    }
 }
 
-Resource<FontData>
-FontData::load_from_memory(const uint8_t* font_file_content, const size_t size)
+ResourceReference<FontData>
+FontData::load(const std::string& path)
 {
-    auto [baked_font_image, baked_font_data] =
-        bake_font_texture(font_file_content, size);
-    bgfx::TextureHandle texture = make_texture(baked_font_image);
+    std::shared_ptr<FontData> font_data;
+    if ((font_data = _fonts_registry.get_resource(path))) {
+        return font_data;
+    }
 
-    return std::make_shared<FontData>(
-        Image::load(texture, baked_font_image), baked_font_data);
+    font_data = std::shared_ptr<FontData>(new FontData(path));
+    _fonts_registry.register_resource(path, font_data);
+    return font_data;
+}
+
+FontData::~FontData()
+{
+    _fonts_registry.unregister_resource(this->path);
+    if (this->is_initialized) {
+        this->_uninitialize();
+    }
 }
 
 std::vector<FontRenderGlyph>
@@ -243,9 +261,27 @@ FontData::generate_render_glyphs(
     return render_glyphs;
 }
 
+void
+FontData::_initialize()
+{
+    RawFile file(this->path);
+    bimg::ImageContainer* baked_font_image;
+    std::tie(baked_font_image, this->baked_font) = bake_font_texture(file);
+    this->baked_texture = Image::load(baked_font_image);
+    this->is_initialized = true;
+}
+
+void
+FontData::_uninitialize()
+{
+    this->baked_texture.res_ptr.reset();
+    this->is_initialized = false;
+}
+
 Font::Font() {}
 
-Font::Font(const Resource<FontData>& font_data) : _font_data(font_data) {}
+Font::Font(const ResourceReference<FontData>& font_data) : _font_data(font_data)
+{}
 
 Font
 Font::load(const std::string& font_filepath)
@@ -262,13 +298,7 @@ container_node(const TextNode* text)
 TextNode::TextNode()
     : _content("TXT"), _font_size(28.), _line_width(INFINITY),
       _interline_spacing(1.), _first_line_indent(0.)
-{
-    static auto file_pair =
-        get_embedded_file_content("embedded_resources/font_munro/munro.ttf");
-    static Resource<FontData> default_font =
-        FontData::load_from_memory(file_pair.first, file_pair.second);
-    this->font(default_font);
-}
+{}
 
 TextNode::~TextNode() {}
 

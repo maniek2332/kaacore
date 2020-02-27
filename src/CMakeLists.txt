@@ -68,6 +68,7 @@ configure_file(
 
 set(SRC_CXX_FILES
     nodes.cpp
+    node_ptr.cpp
     engine.cpp
     files.cpp
     log.cpp
@@ -79,6 +80,7 @@ set(SRC_CXX_FILES
     shapes.cpp
     physics.cpp
     resources.cpp
+    resources_manager.cpp
     sprites.cpp
     window.cpp
     geometry.cpp
@@ -86,11 +88,13 @@ set(SRC_CXX_FILES
     timers.cpp
     transitions.cpp
     node_transitions.cpp
+    utils.cpp
     embedded_data.cpp
 )
 
 set(SRC_H_FILES
     ../include/kaacore/nodes.h
+    ../include/kaacore/node_ptr.h
     ../include/kaacore/engine.h
     ../include/kaacore/files.h
     ../include/kaacore/log.h
@@ -102,6 +106,7 @@ set(SRC_H_FILES
     ../include/kaacore/shapes.h
     ../include/kaacore/physics.h
     ../include/kaacore/resources.h
+    ../include/kaacore/resources_manager.h
     ../include/kaacore/sprites.h
     ../include/kaacore/window.h
     ../include/kaacore/geometry.h
