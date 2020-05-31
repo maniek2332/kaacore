@@ -22,7 +22,6 @@ class Scene {
 
     Camera& camera();
     void reset_views();
-    void process_frame(uint32_t dt);
     void process_physics(uint32_t dt);
     void process_nodes(uint32_t dt);
     void process_nodes_drawing();
