@@ -2,6 +2,7 @@
 #include <tuple>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "kaacore/exceptions.h"
 #include "kaacore/geometry.h"
@@ -110,13 +111,36 @@ Shape::Box(const glm::dvec2 size)
                                             {+0.5 * size.x, +0.5 * size.y},
                                             {-0.5 * size.x, +0.5 * size.y}};
 
-    const std::vector<StandardVertexData> vertices = {
+    std::vector<StandardVertexData> vertices = {
         StandardVertexData::XY_UV(-0.5 * size.x, -0.5 * size.y, 0., 0.),
         StandardVertexData::XY_UV(+0.5 * size.x, -0.5 * size.y, 1., 0.),
         StandardVertexData::XY_UV(+0.5 * size.x, +0.5 * size.y, 1., 1.),
         StandardVertexData::XY_UV(-0.5 * size.x, +0.5 * size.y, 0., 1.)};
 
     const std::vector<VertexIndex> indices = {0, 2, 1, 0, 3, 2};
+
+    for (auto& vertex : vertices) {
+        // float raw_mat[16] = {1., 0., 0., -0.006,  0., 1.333, 0., 0.,  0., 0., 1., 0.,  -16.666, 0., 0., 1.};
+        float raw_mat[16] = {
+            1.00000000e+00, -7.10542736e-17, 0., -6.66666667e-03,
+            -0.00000000e+00, 1.33333333e+00, 0., 0.00000000e+00,
+            0., 0., 1., 0.,
+            -1.66666667e+01,  0.00000000e+00, 0., 1.00000000e+00};
+        glm::fmat4 mat = glm::make_mat4(raw_mat);
+        glm::fvec4 pos = {vertex.xyz.x, vertex.xyz.y, 0.0f, 1.0f};
+        log(" (Shape) Before: %lf %lf %lf %lf", pos.x, pos.y, pos.z, pos.w);
+        pos = mat * pos;
+        log(" (Shape) After: %lf %lf %lf %lf", pos.x, pos.y, pos.z, pos.w);
+        // vertex.xyz.x = pos.x / pos.w;
+        // vertex.xyz.y = pos.y / pos.w;
+        // vertex.xyz.z = pos.z / pos.w;
+        vertex.xyz.x = pos.x;
+        vertex.xyz.y = pos.y;
+        vertex.xyz.z = pos.z;
+        vertex.xyz.w = pos.w;
+        // vertex.uv.x /= pos.w;
+        // vertex.uv.y /= pos.w;
+    }
 
     return Shape(ShapeType::polygon, points, 0., indices, vertices, points);
 }
@@ -164,6 +188,17 @@ Shape::Polygon(const std::vector<glm::dvec2>& points)
         vertex.uv.x = (vertex.xyz.x - min_pt.x) / (max_pt.x - min_pt.x);
         vertex.uv.y = (vertex.xyz.y - min_pt.y) / (max_pt.y - min_pt.y);
     }
+
+    // for (auto& vertex : vertices) {
+    //     float raw_mat[16] = {1., 0., 0., -0.006,  0., 1.333, 0., 0.,  0., 0., 1., 0.,  -16.666, 0., 0., 1.};
+    //     glm::fmat4 mat = glm::make_mat4(raw_mat);
+    //     glm::fvec4 pos = {vertex.xyz.x, vertex.xyz.y, 0.0f, 1.0f};
+    //     log("Before: %lf %lf %lf %lf", pos.x, pos.y, pos.z, pos.w);
+    //     pos = mat * pos;
+    //     log("After: %lf %lf %lf %lf", pos.x, pos.y, pos.z, pos.w);
+    //     vertex.xyz.x = pos.x / pos.w;
+    //     vertex.xyz.y = pos.y / pos.w;
+    // }
 
     return Shape(
         ShapeType::polygon, polygon_points, 0., indices, vertices,

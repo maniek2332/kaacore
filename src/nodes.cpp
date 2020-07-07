@@ -233,14 +233,16 @@ Node::recalculate_render_data()
     this->_render_data.computed_vertices = this->_shape.vertices;
     for (auto& vertex : this->_render_data.computed_vertices) {
         glm::dvec4 pos = {vertex.xyz.x + pos_realignment.x,
-                          vertex.xyz.y + pos_realignment.y, vertex.xyz.z, 1.};
+                          vertex.xyz.y + pos_realignment.y, vertex.xyz.z, vertex.xyz.w};
+        log(" Before: %lf %lf %lf %lf", pos.x, pos.y, pos.z, pos.w);
         pos = this->_model_matrix.value * pos;
-        vertex.xyz = {pos.x, pos.y, pos.z};
+        vertex.xyz = {pos.x, pos.y, pos.z, pos.w};
+        log(" After: %lf %lf %lf %lf", pos.x, pos.y, pos.z, pos.w);
 
-        if (this->_sprite.has_texture()) {
-            auto uv_rect = this->_sprite.get_display_rect();
-            vertex.uv = glm::mix(uv_rect.first, uv_rect.second, vertex.uv);
-        }
+        // if (this->_sprite.has_texture()) {
+        //     auto uv_rect = this->_sprite.get_display_rect();
+        //     vertex.uv = glm::mix(uv_rect.first, uv_rect.second, vertex.uv);
+        // }
 
         vertex.rgba *= this->_color;
     }

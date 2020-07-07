@@ -6,13 +6,15 @@ SAMPLER2D(s_texture, 0);
 
 void main()
 {
-	vec2 tmp = abs(v_texcoord1);
-	tmp = tmp * tmp;
-	gl_FragColor = vec4(texture2D(s_texture, v_texcoord0).rgba) * v_color0;
-	if (tmp.x + tmp.y > 0.26) {
-		discard;
-	} else if (tmp.x + tmp.y > 0.24) {
-		float alpha_mod = 1. - smoothstep(0.24, 0.26, tmp.x + tmp.y);
-		gl_FragColor.a = gl_FragColor.a * alpha_mod;
-	}
+	/* vec2 tmp = abs(v_texcoord1); */
+	/* tmp = tmp * tmp; */
+	/* gl_FragColor = vec4(texture2DProj(s_texture, vec4(v_texcoord0.xy, 0., gl_FragCoord.w)).rgba) * v_color0; */
+	/* gl_FragColor = vec4(texture2DProj(s_texture, v_texcoord0).rgba) * v_color0; */
+	gl_FragColor = vec4(texture2D(s_texture, v_texcoord0.xy).rgba) * v_color0;
+	/* if (tmp.x + tmp.y > 0.26) { */
+	/* 	discard; */
+	/* } else if (tmp.x + tmp.y > 0.24) { */
+	/* 	float alpha_mod = 1. - smoothstep(0.24, 0.26, tmp.x + tmp.y); */
+	/* 	gl_FragColor.a = gl_FragColor.a * alpha_mod; */
+	/* } */
 }

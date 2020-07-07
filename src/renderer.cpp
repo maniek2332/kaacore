@@ -89,7 +89,7 @@ Renderer::Renderer(const glm::uvec2& window_size)
 {
     log("Initializing renderer.");
     this->vertex_layout.begin()
-        .add(bgfx::Attrib::Enum::Position, 3, bgfx::AttribType::Enum::Float)
+        .add(bgfx::Attrib::Enum::Position, 4, bgfx::AttribType::Enum::Float)
         .add(bgfx::Attrib::Enum::TexCoord0, 2, bgfx::AttribType::Enum::Float)
         .add(bgfx::Attrib::Enum::TexCoord1, 2, bgfx::AttribType::Enum::Float)
         .add(bgfx::Attrib::Enum::Color0, 4, bgfx::AttribType::Enum::Float)
@@ -271,6 +271,11 @@ Renderer::render_vertices(
         &vertices_buffer, vertices.size(), this->vertex_layout);
     bgfx::allocTransientIndexBuffer(&indices_buffer, indices.size());
 
+    // log("Vertices: ");
+    // for (const auto& v : vertices) {
+    //     log("%lf %lf %lf %lf", v.xyz.x, v.xyz.y, v.xyz.z, v.xyz.w);
+    // }
+    // log(" * ");
     std::memcpy(
         vertices_buffer.data, vertices.data(),
         sizeof(StandardVertexData) * vertices.size());
