@@ -527,7 +527,7 @@ Renderer::_submit_draw_bucket_state(const DrawBucketKey& key)
 
     bgfx::setState(
         BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_WRITE_Z |
-        BGFX_STATE_MSAA | BGFX_STATE_BLEND_ALPHA | key.state_flags);
+        BGFX_STATE_MSAA | key.state_flags);
     bgfx::setStencil(key.stencil_flags);
 
     uint32_t sorting_value =

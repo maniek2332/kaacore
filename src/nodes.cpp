@@ -226,7 +226,7 @@ Node::_make_draw_bucket_key() const
     } else {
         key.material_raw_ptr = this->_material.get();
     }
-    key.state_flags = 0u;
+    key.state_flags = this->_blending_mode.state_flags();
     key.stencil_flags = 0u;
 
     return key;
@@ -739,6 +739,25 @@ void
 Node::material(const ResourceReference<Material>& material)
 {
     this->_material = material;
+}
+
+BlendingMode
+Node::blending_mode() const
+{
+    return this->_blending_mode;
+}
+
+void
+Node::blending_mode(BlendingMode blending_mode)
+{
+    if (blending_mode == this->_blending_mode) {
+        return;
+    }
+
+    // TODO recursive
+
+    this->_blending_mode = blending_mode;
+    this->_draw_unit_data.updated_bucket_key = true;
 }
 
 glm::dvec4

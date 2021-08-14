@@ -9,6 +9,7 @@
 #include <bgfx/bgfx.h>
 #include <glm/glm.hpp>
 
+#include "kaacore/blending.h"
 #include "kaacore/draw_unit.h"
 #include "kaacore/fonts.h"
 #include "kaacore/geometry.h"
@@ -100,6 +101,9 @@ class Node {
 
     ResourceReference<Material>& material();
     void material(const ResourceReference<Material>& material);
+
+    BlendingMode blending_mode() const;
+    void blending_mode(BlendingMode blending_mode);
 
     glm::dvec4 color();
     void color(const glm::dvec4& color);
@@ -202,6 +206,7 @@ class Node {
     HighPrecisionDuration _lifetime = 0us;
     NodeTransitionsManager _transitions_manager;
     ResourceReference<Material> _material;
+    BlendingMode _blending_mode;
 
     Scene* _scene = nullptr;
     uint64_t _scene_tree_id = 0;
