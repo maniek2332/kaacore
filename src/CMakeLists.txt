@@ -54,6 +54,7 @@ set(SRC_CXX_FILES
     draw_unit.cpp
     draw_queue.cpp
     blending.cpp
+    stencil.cpp
 )
 
 set(SRC_H_FILES
@@ -94,6 +95,7 @@ set(SRC_H_FILES
     ../include/kaacore/draw_unit.h
     ../include/kaacore/draw_queue.h
     ../include/kaacore/blending.h
+    ../include/kaacore/stencil.h
 
     ../include/kaacore/utils.h
     ../include/kaacore/embedded_data.h
