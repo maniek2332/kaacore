@@ -15,7 +15,7 @@ enum class BlendingFactor : uint8_t {
     src_color = BGFX_STATE_BLEND_SRC_COLOR >> BGFX_STATE_BLEND_SHIFT,
     inverted_src_color = BGFX_STATE_BLEND_INV_SRC_COLOR >> BGFX_STATE_BLEND_SHIFT,
     src_alpha = BGFX_STATE_BLEND_SRC_ALPHA >> BGFX_STATE_BLEND_SHIFT,
-    inv_src_alpha = BGFX_STATE_BLEND_INV_SRC_ALPHA >> BGFX_STATE_BLEND_SHIFT,
+    inverted_src_alpha = BGFX_STATE_BLEND_INV_SRC_ALPHA >> BGFX_STATE_BLEND_SHIFT,
     dst_alpha = BGFX_STATE_BLEND_DST_ALPHA >> BGFX_STATE_BLEND_SHIFT,
     inverted_dst_alpha = BGFX_STATE_BLEND_INV_DST_ALPHA >> BGFX_STATE_BLEND_SHIFT,
     dst_color = BGFX_STATE_BLEND_DST_COLOR >> BGFX_STATE_BLEND_SHIFT,
@@ -27,10 +27,10 @@ enum class BlendingFactor : uint8_t {
 enum class BlendingEquation : uint8_t {
     // not_provided = 0,
     add = BGFX_STATE_BLEND_EQUATION_ADD >> BGFX_STATE_BLEND_EQUATION_SHIFT,
-    subtract = BGFX_STATE_BLEND_EQUATION_ADD >> BGFX_STATE_BLEND_EQUATION_SHIFT,
-    reverse_subtract = BGFX_STATE_BLEND_EQUATION_ADD >> BGFX_STATE_BLEND_EQUATION_SHIFT,
-    min = BGFX_STATE_BLEND_EQUATION_ADD >> BGFX_STATE_BLEND_EQUATION_SHIFT,
-    max = BGFX_STATE_BLEND_EQUATION_ADD >> BGFX_STATE_BLEND_EQUATION_SHIFT,
+    subtract = BGFX_STATE_BLEND_EQUATION_SUB >> BGFX_STATE_BLEND_EQUATION_SHIFT,
+    reverse_subtract = BGFX_STATE_BLEND_EQUATION_REVSUB >> BGFX_STATE_BLEND_EQUATION_SHIFT,
+    min = BGFX_STATE_BLEND_EQUATION_MIN >> BGFX_STATE_BLEND_EQUATION_SHIFT,
+    max = BGFX_STATE_BLEND_EQUATION_MAX >> BGFX_STATE_BLEND_EQUATION_SHIFT,
 };
 
 struct BlendingMode {
@@ -58,7 +58,6 @@ struct BlendingMode {
 
 namespace std {
 using kaacore::hash_combined;
-using kaacore::hash_iterable;
 
 template<>
 struct hash<kaacore::BlendingMode> {

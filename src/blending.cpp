@@ -3,7 +3,7 @@
 namespace kaacore {
 
 BlendingMode::BlendingMode()
-    : BlendingMode(BlendingFactor::src_alpha, BlendingFactor::inv_src_alpha)
+    : BlendingMode(BlendingFactor::src_alpha, BlendingFactor::inverted_src_alpha)
 {}
 
 BlendingMode::BlendingMode(
