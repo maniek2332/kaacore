@@ -276,7 +276,7 @@ Engine::_gather_platform_data()
     // using sdl's provided ndt pointer might cause
     // segfault during engine 2nd initialization,
     // bgfx is capable of querying this info on it's own
-    bgfx_init_data.platformData.ndt = nullptr;
+    bgfx_init_data.platformData.ndt = wminfo.info.x11.display;
     bgfx_init_data.platformData.nwh =
         reinterpret_cast<void*>(wminfo.info.x11.window);
 #elif SDL_VIDEO_DRIVER_WINDOWS
@@ -292,6 +292,7 @@ Engine::_gather_platform_data()
     bgfx_init_data.platformData.backBuffer = nullptr;
     bgfx_init_data.platformData.backBufferDS = nullptr;
     bgfx_init_data.debug = true;
+    bgfx_init_data.vendorId = BGFX_PCI_ID_NVIDIA;
     return bgfx_init_data;
 }
 

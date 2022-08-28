@@ -21,6 +21,7 @@ Memory
 get_embedded_file_content(
     const cmrc::embedded_filesystem& filesystem, const std::string& path)
 {
+    KAACORE_LOG_DEBUG("Loading embedded file: '{}'.", path);
     std::lock_guard lock{embedded_resource_load_mutex};
     if (not filesystem.exists(path)) {
         throw embedded_file_error{
