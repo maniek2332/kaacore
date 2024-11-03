@@ -9,7 +9,7 @@
 	url = https://github.com/slembcke/Chipmunk2D
 [submodule "third_party/sdl2"]
 	path = third_party/sdl2
-	url = https://github.com/SDL-mirror/SDL
+	url = https://github.com/libsdl-org/SDL
 [submodule "third_party/glm"]
 	path = third_party/glm
 	url = https://github.com/g-truc/glm
