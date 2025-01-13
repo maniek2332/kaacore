@@ -284,6 +284,7 @@ FontRenderGlyph::FontRenderGlyph(
         this->advance, this->texture_uv0.x, this->texture_uv0.y,
         this->texture_uv1.x, this->texture_uv1.y
     );
+    this->skip = false;
 }
 
 FontRenderGlyph::FontRenderGlyph(
@@ -314,6 +315,7 @@ FontRenderGlyph::arrange_glyphs(
     for (auto it = word_start; it != render_glyphs.end(); it++) {
         if (it->codepoint == static_cast<UnicodeCodepoint>(' ')) {
             word_start = it + 1;
+            it->skip = true;  // don't render space character
             if (current_pos.x == 0.) {
                 continue;
             }
@@ -324,6 +326,7 @@ FontRenderGlyph::arrange_glyphs(
             word_start = it + 1;
             current_pos.x = 0.;
             current_pos.y += line_height;
+            it->skip = true;  // don't render newline character
             continue;
         }
         current_pos.x += it->advance;
@@ -369,7 +372,7 @@ FontRenderGlyph::make_shape(
         };
         bounding_box = rg_bounding_box.merge(bounding_box);
 
-        if (not rg.has_size()) {
+        if (rg.skip or not rg.has_size()) {
             continue;
         }
         auto vertices_count = vertices.size();
@@ -493,18 +496,17 @@ FontData::generate_render_glyphs(
     };
 
     for (UnicodeCodepoint codepoint : text) {
-        if (codepoint == '\n') {
-            codepoint = static_cast<UnicodeCodepoint>(' ');
-        }
-
         auto it = this->baked_font.find(codepoint);
         stbtt_packedchar glyph_data;
         if (it != this->baked_font.end()) {
             glyph_data = it->second;
         } else {
-            KAACORE_LOG_WARN("Unhadled font character: {:#x}", codepoint);
-            glyph_data =
-                this->baked_font.at(static_cast<UnicodeCodepoint>('?'));
+            // prevent printing waring for well-known missing characters (like CR, LF)
+            if (codepoint != '\n' and codepoint != '\r') {
+                KAACORE_LOG_WARN("Unhadled font character: {:#x}", codepoint);
+                glyph_data =
+                    this->baked_font.at(static_cast<UnicodeCodepoint>('?'));
+            }
         }
 
         if (not render_glyphs.empty()) {

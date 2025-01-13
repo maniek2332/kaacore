@@ -87,6 +87,7 @@ struct FontRenderGlyph {
     glm::dvec2 texture_uv0;
     glm::dvec2 texture_uv1;
     double advance;
+    bool skip;
 
     FontRenderGlyph(
         UnicodeCodepoint codepoint, stbtt_packedchar glyph_data,

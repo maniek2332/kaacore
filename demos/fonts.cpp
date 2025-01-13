@@ -42,10 +42,10 @@ struct DemoFontsScene : kaacore::Scene {
         );
         auto node_text = kaacore::make_node(kaacore::NodeType::text);
         node_text->position({200., 0.});
-        node_text->text.content(txt_lorem_ipsum);
-        node_text->text.font_size(24.);
-        node_text->text.line_width(270.);
         node_text->text.font(font);
+        node_text->text.font_size(24.);
+        node_text->text.content(txt_lorem_ipsum);
+        node_text->text.line_width(270.);
         node_text->text.first_line_indent(15.);
         node_text->color({0., 0., 0., 1.});
         this->node_text = this->root_node.add_child(node_text);
