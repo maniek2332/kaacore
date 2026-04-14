@@ -261,8 +261,6 @@ Renderer::type() const
     switch (bgfx::getRendererType()) {
         case bgfx::RendererType::Noop:
             return RendererType::noop;
-        case bgfx::RendererType::Direct3D9:
-            return RendererType::dx9;
         case bgfx::RendererType::Direct3D11:
             return RendererType::dx11;
         case bgfx::RendererType::Direct3D12:
@@ -282,8 +280,6 @@ ShaderModel
 Renderer::shader_model() const
 {
     switch (this->type()) {
-        case RendererType::dx9:
-            return ShaderModel::hlsl_dx9;
         case RendererType::dx11:
         case RendererType::dx12:
             return ShaderModel::hlsl_dx11;

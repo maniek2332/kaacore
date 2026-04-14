@@ -60,7 +60,7 @@ set_target_properties(
 )
 
 add_subdirectory(src)
-target_link_libraries(kaacore PUBLIC bx bimg)
+target_link_libraries(kaacore PUBLIC bx bimg bimg_decode)
 
 add_subdirectory(shaders)
 target_link_libraries(kaacore PUBLIC kaacore_embedded_shaders)

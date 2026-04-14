@@ -22,7 +22,6 @@ namespace kaacore {
 
 enum class RendererType {
     noop = bgfx::RendererType::Noop,
-    dx9 = bgfx::RendererType::Direct3D9,
     dx11 = bgfx::RendererType::Direct3D11,
     dx12 = bgfx::RendererType::Direct3D12,
     metal = bgfx::RendererType::Metal,

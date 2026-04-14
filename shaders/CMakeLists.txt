@@ -20,7 +20,7 @@ set_target_properties(
 
 function( add_shader ARG_FILE )
 	# Parse arguments
-	cmake_parse_arguments( ARG "FRAGMENT;VERTEX;COMPUTE" "OUTPUT;GLSL_VERSION;DX9_MODEL;DX11_MODEL" "INCLUDES" "PLATFORMS" ${ARGN} )
+	cmake_parse_arguments( ARG "FRAGMENT;VERTEX;COMPUTE" "OUTPUT;GLSL_VERSION;DX9_MODEL;DX11_MODEL" "INCLUDES;PLATFORMS" ${ARGN} )
 
 	# Get filename
 	get_filename_component( FILENAME "${ARG_FILE}" NAME_WE )
@@ -146,7 +146,7 @@ function( add_shader ARG_FILE )
 		endif()
 
 		list( APPEND OUTPUTS ${OUTPUT} )
-		shaderc_parse( CMD ${OPTIONS} )
+		_bgfx_shaderc_parse( CMD ${OPTIONS} )
 		list( APPEND COMMANDS COMMAND "${CMAKE_COMMAND}" -E make_directory "${ARG_OUTPUT}/${PLATFORM}" )
 		list( APPEND COMMANDS COMMAND "$<TARGET_FILE:shaderc>" ${CMD} )
 	endforeach()

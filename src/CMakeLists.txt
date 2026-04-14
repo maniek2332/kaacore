@@ -139,7 +139,7 @@ target_include_directories(kaacore PUBLIC
 set_target_properties(
     kaacore
     PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
 )

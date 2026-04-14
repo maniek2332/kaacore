@@ -62,8 +62,6 @@ choose_renderer_backend(const std::string& renderer_name)
 {
     if (renderer_name == "noop") {
         return bgfx::RendererType::Noop;
-    } else if (renderer_name == "dx9") {
-        return bgfx::RendererType::Direct3D9;
     } else if (renderer_name == "dx11") {
         return bgfx::RendererType::Direct3D11;
     } else if (renderer_name == "dx12") {
