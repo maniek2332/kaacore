@@ -216,6 +216,7 @@ Engine::~Engine()
         KAACORE_LOG_DEBUG("Waiting for bgfx shutdown... ({})", ret);
     }
     this->_engine_loop_thread.join();
+    this->window->_deactivate();
 #else
     this->resources_manager.reset();
     this->renderer.reset();
@@ -236,8 +237,8 @@ Engine::run(Scene* scene)
     this->_main_thread_entrypoint();
 #else
     this->_single_thread_entrypoint();
-#endif
     this->window->_deactivate();
+#endif
 }
 
 void
@@ -364,31 +365,52 @@ Engine::_gather_platform_data()
     bgfx_init_data.type = renderer_type;
     bgfx_init_data.vendorId =
         choose_gpu_vendor(get_env_or_empty_string("KAACORE_GPU_VENDOR"));
-#if SDL_VIDEO_DRIVER_X11
-    if (renderer_type == bgfx::RendererType::OpenGL) {
-        // using sdl's provided ndt pointer might cause
-        // segfault during engine 2nd initialization,
-        // bgfx is capable of querying this info on it's own
-        bgfx_init_data.platformData.ndt = nullptr;
-    } else {
-        // Vulkan renderer implementation in bgfx is not capable
-        // of querying the display details on their own so we have to
-        // fetch this data from SDL.
-        // Unfortunately it will most cause a SEGFAULT
-        // on 2nd kaaengine initialization.
-        bgfx_init_data.platformData.ndt = wminfo.info.x11.display;
+bool platform_configured = false;
+#if defined(SDL_VIDEO_DRIVER_WAYLAND)
+    if (wminfo.subsystem == SDL_SYSWM_WAYLAND) {
+        bgfx_init_data.platformData.ndt = wminfo.info.wl.display;
+        bgfx_init_data.platformData.nwh = (void*)wminfo.info.wl.surface;
+        bgfx_init_data.platformData.type = bgfx::NativeWindowHandleType::Wayland;
+        platform_configured = true;
     }
-    bgfx_init_data.platformData.nwh =
-        reinterpret_cast<void*>(wminfo.info.x11.window);
-#elif SDL_VIDEO_DRIVER_WINDOWS
-    bgfx_init_data.platformData.ndt = nullptr;
-    bgfx_init_data.platformData.nwh = wminfo.info.win.window;
-#elif SDL_VIDEO_DRIVER_COCOA
-    bgfx_init_data.platformData.ndt = nullptr;
-    bgfx_init_data.platformData.nwh = wminfo.info.cocoa.window;
-#else
-#error "No platform configuration available for given renderer"
 #endif
+#if defined(SDL_VIDEO_DRIVER_X11)
+    if (wminfo.subsystem == SDL_SYSWM_X11) {
+        if (renderer_type == bgfx::RendererType::OpenGL) {
+            // using sdl's provided ndt pointer might cause
+            // segfault during engine 2nd initialization,
+            // bgfx is capable of querying this info on it's own
+            bgfx_init_data.platformData.ndt = nullptr;
+        } else {
+            // Vulkan renderer implementation in bgfx is not capable
+            // of querying the display details on their own so we have to
+            // fetch this data from SDL.
+            // Unfortunately it will most cause a SEGFAULT
+            // on 2nd kaaengine initialization.
+            bgfx_init_data.platformData.ndt = wminfo.info.x11.display;
+        }
+        bgfx_init_data.platformData.nwh =
+            reinterpret_cast<void*>(wminfo.info.x11.window);
+        platform_configured = true;
+    }
+#endif
+#if defined(SDL_VIDEO_DRIVER_WINDOWS)
+    if (wminfo.subsystem == SDL_SYSWM_WINDOWS) {
+        bgfx_init_data.platformData.ndt = nullptr;
+        bgfx_init_data.platformData.nwh = wminfo.info.win.window;
+        platform_configured = true;
+    }
+#endif
+#if defined(SDL_VIDEO_DRIVER_COCOA)
+    if (wminfo.subsystem == SDL_SYSWM_COCOA) {
+        bgfx_init_data.platformData.ndt = nullptr;
+        bgfx_init_data.platformData.nwh = wminfo.info.cocoa.window;
+        platform_configured = true;
+    }
+#endif
+    if (!platform_configured) {
+        throw exception("No platform configuration available for given renderer");
+    }
     bgfx_init_data.platformData.context = nullptr;
     bgfx_init_data.platformData.backBuffer = nullptr;
     bgfx_init_data.platformData.backBufferDS = nullptr;
