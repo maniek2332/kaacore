@@ -408,7 +408,7 @@ bool platform_configured = false;
         platform_configured = true;
     }
 #endif
-    if (!platform_configured) {
+    if (!platform_configured && renderer_type != bgfx::RendererType::Noop) {
         throw exception("No platform configuration available for given renderer");
     }
     bgfx_init_data.platformData.context = nullptr;
