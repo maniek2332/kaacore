@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 if (NOT DEFINED KAACORE_SHADERC_PLATFORMS)
     if(MSVC)
-        set(KAACORE_SHADERC_PLATFORMS dx9 dx11 glsl spirv)
+        set(KAACORE_SHADERC_PLATFORMS dx11 glsl spirv)
     elseif(APPLE)
         set(KAACORE_SHADERC_PLATFORMS metal glsl spirv)
     else()
@@ -20,7 +20,7 @@ set_target_properties(
 
 function( add_shader ARG_FILE )
 	# Parse arguments
-	cmake_parse_arguments( ARG "FRAGMENT;VERTEX;COMPUTE" "OUTPUT;GLSL_VERSION;DX9_MODEL;DX11_MODEL" "INCLUDES;PLATFORMS" ${ARGN} )
+	cmake_parse_arguments( ARG "FRAGMENT;VERTEX;COMPUTE" "OUTPUT;GLSL_VERSION;DX11_MODEL" "INCLUDES;PLATFORMS" ${ARGN} )
 
 	# Get filename
 	get_filename_component( FILENAME "${ARG_FILE}" NAME_WE )
@@ -59,7 +59,7 @@ function( add_shader ARG_FILE )
 		set( PLATFORMS ${ARG_PLATFORMS} )
 	else()
 		if( MSVC )
-			set( PLATFORMS dx9 dx11 glsl essl asm.js spirv )
+			set( PLATFORMS dx11 glsl essl asm.js spirv )
 		elseif( APPLE )
 			set( PLATFORMS metal glsl essl asm.js spirv )
 		else()
@@ -75,10 +75,6 @@ function( add_shader ARG_FILE )
 	)
 
 	# Parse profiles
-	set( DX9_PROFILE PROFILE ${D3D_PREFIX}_3_0 )
-	if( ARG_DX9_MODEL )
-		set( DX9_PROFILE PROFILE ${D3D_PREFIX}_${ARG_DX9_MODEL} )
-	endif()
 	set( DX11_PROFILE PROFILE ${D3D_PREFIX}_5_0 )
 	if( ARG_DX11_MODEL )
 		set( DX11_PROFILE PROFILE ${D3D_PREFIX}_${ARG_DX11_MODEL} )
@@ -100,13 +96,7 @@ function( add_shader ARG_FILE )
 		set( OUTPUT "${ARG_OUTPUT}/${PLATFORM}/${FILENAME}.bin" )
 		get_filename_component( OUTPUT "${OUTPUT}" ABSOLUTE )
 
-		if( "${PLATFORM}" STREQUAL "dx9" )
-			list( APPEND OPTIONS
-				WINDOWS
-				${DX9_PROFILE}
-				OUTPUT ${OUTPUT}
-			)
-		elseif( "${PLATFORM}" STREQUAL "dx11" )
+		if( "${PLATFORM}" STREQUAL "dx11" )
 			list( APPEND OPTIONS
 				WINDOWS
 				${DX11_PROFILE}
