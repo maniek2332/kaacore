@@ -281,8 +281,9 @@ Renderer::shader_model() const
 {
     switch (this->type()) {
         case RendererType::dx11:
+            return ShaderModel::hlsl_dxbc;
         case RendererType::dx12:
-            return ShaderModel::hlsl_dx11;
+            return ShaderModel::hlsl_dxil;
         case RendererType::metal:
             return ShaderModel::metal;
         case RendererType::opengl:

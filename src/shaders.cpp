@@ -72,10 +72,10 @@ _get_shader_model_tag(ShaderModel model)
             return "spirv";
         case ShaderModel::metal:
             return "metal";
-        case ShaderModel::hlsl_dx9:
-            return "dx9";
-        case ShaderModel::hlsl_dx11:
-            return "dx11";
+        case ShaderModel::hlsl_dxbc:
+            return "dxbc";
+        case ShaderModel::hlsl_dxil:
+            return "dxil";
         default:
             return "unknown";
     }
@@ -98,7 +98,7 @@ _load_embedded_shader_memory_map(
             break;
         case PlatformType::windows:
             models = {
-                ShaderModel::hlsl_dx9, ShaderModel::hlsl_dx11,
+                ShaderModel::hlsl_dxbc, ShaderModel::hlsl_dxil,
                 ShaderModel::glsl, ShaderModel::spirv
             };
             break;

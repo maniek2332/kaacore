@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 if (NOT DEFINED KAACORE_SHADERC_PLATFORMS)
     if(MSVC)
-        set(KAACORE_SHADERC_PLATFORMS dx11 glsl spirv)
+        set(KAACORE_SHADERC_PLATFORMS dxbc dxil glsl spirv)
     elseif(APPLE)
         set(KAACORE_SHADERC_PLATFORMS metal glsl spirv)
     else()
@@ -42,13 +42,10 @@ function( add_shader ARG_FILE )
 
 	if( ARG_FRAGMENT )
 		set( TYPE "FRAGMENT" )
-		set( D3D_PREFIX "ps" )
 	elseif( ARG_VERTEX )
 		set( TYPE "VERTEX" )
-		set( D3D_PREFIX "vs" )
 	elseif( ARG_COMPUTE )
 		set( TYPE "COMPUTE" )
-		set( D3D_PREFIX "cs" )
 	else()
 		message( SEND_ERROR "add_shader must be called with either FRAGMENT or VERTEX or COMPUTE." )
  		return()
@@ -59,11 +56,11 @@ function( add_shader ARG_FILE )
 		set( PLATFORMS ${ARG_PLATFORMS} )
 	else()
 		if( MSVC )
-			set( PLATFORMS dx11 glsl essl asm.js spirv )
+			set( PLATFORMS dxbc dxil glsl asm.js spirv )
 		elseif( APPLE )
-			set( PLATFORMS metal glsl essl asm.js spirv )
+			set( PLATFORMS metal glsl asm.js spirv )
 		else()
-			set( PLATFORMS glsl essl asm.js spirv )
+			set( PLATFORMS glsl asm.js spirv )
 		endif()
 	endif()
 
@@ -75,13 +72,16 @@ function( add_shader ARG_FILE )
 	)
 
 	# Parse profiles
-	set( DX11_PROFILE PROFILE ${D3D_PREFIX}_5_0 )
+	set( DXBC_PROFILE PROFILE s_5_0 )
+	set( DXIL_PROFILE PROFILE s_6_0 )
 	if( ARG_DX11_MODEL )
-		set( DX11_PROFILE PROFILE ${D3D_PREFIX}_${ARG_DX11_MODEL} )
+		set( DXBC_PROFILE PROFILE s_${ARG_DX11_MODEL} )
 	endif()
 	set( GLSL_PROFILE PROFILE 120 )
+	set( ESSL_PROFILE PROFILE 100_es )
 	if( ARG_COMPUTE )
 		set( GLSL_PROFILE PROFILE 430 )
+		set( ESSL_PROFILE PROFILE 300_es )
 	endif()
 	if( ARG_GLSL_VERSION )
 		set( GLSL_PROFILE PROFILE ${ARG_GLSL_VERSION} )
@@ -96,10 +96,16 @@ function( add_shader ARG_FILE )
 		set( OUTPUT "${ARG_OUTPUT}/${PLATFORM}/${FILENAME}.bin" )
 		get_filename_component( OUTPUT "${OUTPUT}" ABSOLUTE )
 
-		if( "${PLATFORM}" STREQUAL "dx11" )
+		if( "${PLATFORM}" STREQUAL "dxbc" )
 			list( APPEND OPTIONS
 				WINDOWS
-				${DX11_PROFILE}
+				${DXBC_PROFILE}
+				OUTPUT ${OUTPUT}
+			)
+		elseif( "${PLATFORM}" STREQUAL "dxil" )
+			list( APPEND OPTIONS
+				WINDOWS
+				${DXIL_PROFILE}
 				OUTPUT ${OUTPUT}
 			)
 		elseif( "${PLATFORM}" STREQUAL "metal" )
@@ -117,6 +123,7 @@ function( add_shader ARG_FILE )
 		elseif( "${PLATFORM}" STREQUAL "essl" )
 			list( APPEND OPTIONS
 				ANDROID
+				${ESSL_PROFILE}
 				OUTPUT ${OUTPUT}
 			)
 		elseif( "${PLATFORM}" STREQUAL "asm.js" )

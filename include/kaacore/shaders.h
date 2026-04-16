@@ -25,7 +25,7 @@ uninitialize_shaders();
 
 enum class ShaderType { vertex, fragment };
 
-enum class ShaderModel { hlsl_dx9, hlsl_dx11, glsl, spirv, metal, unknown };
+enum class ShaderModel { hlsl_dxbc, hlsl_dxil, glsl, spirv, metal, unknown };
 
 using ShaderModelMap = std::unordered_map<ShaderModel, std::string>;
 using ShaderModelMemoryMap = std::unordered_map<ShaderModel, Memory>;
