@@ -20,7 +20,7 @@ set_target_properties(
 
 function( add_shader ARG_FILE )
 	# Parse arguments
-	cmake_parse_arguments( ARG "FRAGMENT;VERTEX;COMPUTE" "OUTPUT;GLSL_VERSION;DX11_MODEL" "INCLUDES;PLATFORMS" ${ARGN} )
+	cmake_parse_arguments( ARG "FRAGMENT;VERTEX;COMPUTE" "OUTPUT" "INCLUDES;PLATFORMS" ${ARGN} )
 
 	# Get filename
 	get_filename_component( FILENAME "${ARG_FILE}" NAME_WE )

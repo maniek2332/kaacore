@@ -283,7 +283,7 @@ Renderer::shader_model() const
         case RendererType::dx11:
             return ShaderModel::hlsl_dxbc;
         case RendererType::dx12:
-            return ShaderModel::hlsl_dxil;
+            return ShaderModel::hlsl_dxbc;
         case RendererType::metal:
             return ShaderModel::metal;
         case RendererType::opengl:
