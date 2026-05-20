@@ -525,6 +525,7 @@ Renderer::set_render_state(
     this->shading_context.bind("u_invViewMat");
     this->shading_context.bind("u_invProjMat");
     this->shading_context.bind("u_invViewProjMat");
+    this->set_global_uniforms();
 
     auto material = render_state.material ? render_state.material
                                           : this->default_material.get_valid();
