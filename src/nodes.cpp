@@ -297,6 +297,8 @@ Node::recalculate_vertices_indices_data()
 
             if (uv_rect) {
                 vt.uv = glm::mix(uv_rect->first, uv_rect->second, orig_vt.uv);
+            } else {
+                vt.uv = orig_vt.uv;
             }
             vt.mn = orig_vt.mn;
             vt.rgba *= this->_color;
