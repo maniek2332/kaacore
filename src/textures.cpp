@@ -76,12 +76,26 @@ load_raw_image(
 glm::dvec4
 query_image_pixel(const bimg::ImageContainer* image, const glm::uvec2 position)
 {
+    KAACORE_CHECK(image->m_data != nullptr, "Image has no pixel data.");
+
+    glm::uvec2 clamped_position = glm::clamp(
+        position, glm::uvec2(0u),
+        glm::uvec2(image->m_width - 1, image->m_height - 1)
+    );
+    if (clamped_position != position) {
+        KAACORE_LOG_WARN(
+            "Pixel position ({}, {}) is out of image bounds ({}x{}), clamping.",
+            position.x, position.y, image->m_width, image->m_height
+        );
+    }
+
     const std::uint32_t bpp = bimg::getBitsPerPixel(image->m_format) / 8;
     std::uint8_t* ptr = reinterpret_cast<std::uint8_t*>(image->m_data);
-    ptr += bpp * ((position.y * image->m_width) + position.x);
+    ptr += bpp * ((clamped_position.y * image->m_width) + clamped_position.x);
 
     float rgba[4];
     bimg::UnpackFn unpack_fn = bimg::getUnpack(image->m_format);
+    KAACORE_CHECK(unpack_fn != nullptr, "No unpack function for image format.");
     unpack_fn(rgba, ptr);
 
     return {rgba[0], rgba[1], rgba[2], rgba[3]};

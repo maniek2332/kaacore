@@ -31,7 +31,7 @@ Sprite::can_query() const
 glm::dvec4
 Sprite::query_pixel(const glm::dvec2 position) const
 {
-    return this->texture->query_pixel(glm::round(origin + position));
+    return this->texture->query_pixel(glm::floor(origin + position));
 }
 
 bool
